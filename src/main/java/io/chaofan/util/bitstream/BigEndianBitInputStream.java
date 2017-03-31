@@ -16,15 +16,11 @@ import java.io.InputStream;
  *
  * @author Chaofan
  */
-public class BigEndianBitInputStream {
+public class BigEndianBitInputStream extends BitInputStream {
 
     private static final int[] MASKS = new int[] {
             0, 1, 3, 7, 0xf, 0x1f, 0x3f, 0x7f, 0xff
     };
-
-    private InputStream in;
-    private int buffer;
-    private int bufferBitCount;
 
     /**
      * Initializes a bit input stream from an InputStream.
@@ -32,8 +28,7 @@ public class BigEndianBitInputStream {
      * @param in the InputStream.
      */
     public BigEndianBitInputStream(InputStream in) {
-        this.in = in;
-        this.bufferBitCount = 0;
+        super(in);
     }
 
     /**
@@ -59,7 +54,7 @@ public class BigEndianBitInputStream {
                     }
                     return result;
                 }
-                bufferBitCount = 8;
+                bufferBitCount = BITS_PER_BYTE;
             }
 
             if (bufferBitCount > numBits) {
@@ -76,22 +71,5 @@ public class BigEndianBitInputStream {
         }
 
         return result;
-    }
-
-    /**
-     * @return available bits in the stream.
-     * @throws IOException if I/O error occurs.
-     */
-    public int availableBits() throws IOException {
-        return (in.available() << 3) + bufferBitCount;
-    }
-
-    /**
-     * Closes the InputStream.
-     *
-     * @throws IOException if I/O error occurs.
-     */
-    public void close() throws IOException {
-        in.close();
     }
 }

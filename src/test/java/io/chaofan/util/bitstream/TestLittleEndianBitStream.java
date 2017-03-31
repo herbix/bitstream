@@ -22,12 +22,22 @@ public class TestLittleEndianBitStream {
         byte[] b = new byte[]{0x12, 0x34, 0x56, 0x78, 0x32, (byte) 0xA8, 0x11};
         LittleEndianBitInputStream in = new LittleEndianBitInputStream(new ByteArrayInputStream(b));
 
+        Assert.assertTrue(in.markSupported());
+
         Assert.assertEquals(56, in.availableBits());
         Assert.assertEquals(0, in.read(0));
         Assert.assertEquals(0x78563412, in.read(32));
-        Assert.assertEquals(0x2, in.read(4));
-        Assert.assertEquals(0x3, in.read(3));
+        Assert.assertEquals(2, in.read(4));
+
+        in.mark(200);
+
+        Assert.assertEquals(3, in.read(3));
         Assert.assertEquals(0, in.read(1));
+        Assert.assertEquals(0xA8, in.read(8));
+
+        in.reset();
+
+        Assert.assertEquals(3, in.read(4));
         Assert.assertEquals(0xA8, in.read(8));
 
         // Trying to read extra bits will only return available ones.

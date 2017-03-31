@@ -14,15 +14,11 @@ import java.io.OutputStream;
  *
  * @author Chaofan
  */
-public class BigEndianBitOutputStream {
+public class BigEndianBitOutputStream extends BitOutputStream {
 
     private static final int[] MASKS = new int[] {
             0, 1, 3, 7, 0xf, 0x1f, 0x3f, 0x7f, 0xff
     };
-
-    private OutputStream out;
-    private int buffer;
-    private int bufferBitCount;
 
     /**
      * Initializes a bit output stream from an OutputStream.
@@ -30,8 +26,7 @@ public class BigEndianBitOutputStream {
      * @param out the OutputStream.
      */
     public BigEndianBitOutputStream(OutputStream out) {
-        this.out = out;
-        this.bufferBitCount = 0;
+        super(out);
     }
 
     /**
@@ -57,17 +52,5 @@ public class BigEndianBitOutputStream {
                 buffer = 0;
             }
         }
-    }
-
-    /**
-     * Writes all bits in buffer to the OutputStream. Then closes it.
-     *
-     * @throws IOException  if an I/O error occurs.
-     */
-    public void close() throws IOException {
-        if (bufferBitCount > 0) {
-            out.write(buffer);
-        }
-        out.close();
     }
 }

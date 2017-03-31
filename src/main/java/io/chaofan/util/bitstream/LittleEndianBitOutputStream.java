@@ -14,15 +14,11 @@ import java.io.OutputStream;
  *
  * @author Chaofan
  */
-public class LittleEndianBitOutputStream {
+public class LittleEndianBitOutputStream extends BitOutputStream {
 
     private static final int[] MASKS = new int[] {
             0, 1, 3, 7, 0xf, 0x1f, 0x3f, 0x7f, 0xff
     };
-
-    private OutputStream out;
-    private int buffer;
-    private int bufferBitCount;
 
     /**
      * Initializes a bit output stream from an OutputStream.
@@ -30,8 +26,7 @@ public class LittleEndianBitOutputStream {
      * @param out the OutputStream.
      */
     public LittleEndianBitOutputStream(OutputStream out) {
-        this.out = out;
-        this.bufferBitCount = 0;
+        super(out);
     }
 
     /**
@@ -43,7 +38,7 @@ public class LittleEndianBitOutputStream {
      */
     public void write(int data, int numBits) throws IOException {
         while (numBits > 0) {
-            int rest = 8 - bufferBitCount;
+            int rest = BITS_PER_BYTE - bufferBitCount;
 
             if (rest > numBits) {
                 buffer = ((data & MASKS[numBits]) << bufferBitCount) | buffer;
@@ -58,17 +53,5 @@ public class LittleEndianBitOutputStream {
                 buffer = 0;
             }
         }
-    }
-
-    /**
-     * Writes all bits in buffer to the OutputStream. Then closes it.
-     *
-     * @throws IOException  if an I/O error occurs.
-     */
-    public void close() throws IOException {
-        if (bufferBitCount > 0) {
-            out.write(buffer);
-        }
-        out.close();
     }
 }
